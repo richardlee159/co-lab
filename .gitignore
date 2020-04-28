@@ -1,6 +1,8 @@
 *.docx
+*.doc
 *.pptx
 *.ppt
 *.xlsx
+*.xls
 *.pdf
 *.rar
