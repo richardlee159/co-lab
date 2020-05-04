@@ -44,11 +44,11 @@ module ram_16x8_tb;
         addr = 0;
         repeat (16) begin
             din = 2 * addr + 1;
-            #(PERIOD*2) addr = addr + 1;
+            #(PERIOD) addr = addr + 1;
         end
         we = 0;
         repeat (16) begin
-            #(PERIOD*2) addr = addr + 3;
+            #(PERIOD) addr = addr + 3;
         end
         en = 0;
         repeat (16) begin
