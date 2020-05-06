@@ -28,6 +28,8 @@ module ram_16x8(
     output [7:0] dout
     );
     
+// 需要例化一种ram时将另一种ram的代码注释掉，否则dout会有多驱动
+
 //    dist_mem_16x8 MEM0(
 //        .clk(clk),
 //        .a(addr),
