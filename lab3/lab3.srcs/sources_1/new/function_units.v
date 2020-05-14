@@ -76,6 +76,24 @@ module register_file            // 32 * WIDTH ¼Ä´æÆ÷¶Ñ
     end
 endmodule
 
+module register_file_db            // 32 * WIDTH RF for DBU
+    #(parameter WIDTH = 32)(
+    output [WIDTH-1:0] rd0, rd1, rdx,
+    input [WIDTH-1:0] wd,
+    input [4:0] ra0, ra1, wa, rax,
+    input clk, we
+    );
+    reg [WIDTH-1:0] regs [1:31];
+    // asynchronous read
+    assign rd0 = ra0 ? regs[ra0] : 0;
+    assign rd1 = ra1 ? regs[ra1] : 0;
+    assign rdx = rax ? regs[rax] : 0;
+    // synchronous write
+    always @(posedge clk) begin
+        if (we && wa) regs[wa] <= wd;
+    end
+endmodule
+
 module register
     #(parameter WIDTH = 32,
     RST_VALUE = 0)(
