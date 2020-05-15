@@ -30,15 +30,12 @@ module alu
     #(parameter WIDTH = 32)(
     output reg [WIDTH-1:0] y,   // result
     output reg zf,              // zero flag
-//    output reg cf,              // carry flag
-//    output reg of,              // overflow flag
     input [WIDTH-1:0] a, b,     // operand
     input [2:0] m               // operation
     );
     localparam MSB = WIDTH - 1;
     
     always @(*) begin
-//        cf = 0;
         case (m)
             `ALU_ADD : {y} = a + b;
             `ALU_SUB : {y} = a - b;
@@ -47,11 +44,6 @@ module alu
             `ALU_XOR : y = a ^ b;
             default : y = 0;
         endcase
-//        case (m)
-//            `ALU_ADD : of = (~a[MSB]&~b[MSB]&y[MSB])|(a[MSB]&b[MSB]&~y[MSB]);
-//            `ALU_SUB : of = (~a[MSB]&b[MSB]&y[MSB])|(a[MSB]&~b[MSB]&~y[MSB]);
-//            default: of = 0;
-//        endcase
         case (m)
             `ALU_ADD, `ALU_SUB, `ALU_AND, `ALU_OR, `ALU_XOR: zf = ~|y;
             default: zf = 0;

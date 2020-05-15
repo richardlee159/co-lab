@@ -12,14 +12,14 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="138500001fs"></ZoomEndTime>
+      <ZoomEndTime time="97350001fs"></ZoomEndTime>
       <Cursor1Time time="0fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="238"></NameColumnWidth>
+      <NameColumnWidth column_width="230"></NameColumnWidth>
       <ValueColumnWidth column_width="116"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="21" />
+   <WVObjectSize size="19" />
    <wvobject fp_name="/cpu_tb/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -27,14 +27,6 @@
    <wvobject fp_name="/cpu_tb/rst" type="logic">
       <obj_property name="ElementShortName">rst</obj_property>
       <obj_property name="ObjectShortName">rst</obj_property>
-   </wvobject>
-   <wvobject fp_name="/cpu_tb/PERIOD" type="array">
-      <obj_property name="ElementShortName">PERIOD[31:0]</obj_property>
-      <obj_property name="ObjectShortName">PERIOD[31:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/cpu_tb/CYCLE" type="array">
-      <obj_property name="ElementShortName">CYCLE[31:0]</obj_property>
-      <obj_property name="ObjectShortName">CYCLE[31:0]</obj_property>
    </wvobject>
    <wvobject fp_name="/cpu_tb/CPU/pc" type="array">
       <obj_property name="ElementShortName">pc[31:0]</obj_property>
