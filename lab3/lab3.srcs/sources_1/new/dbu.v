@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-`define DEBUG
+`define SIMULATION
 
 `define PC_IN  31:0
 `define PC_OUT 63:32
@@ -42,18 +42,19 @@ module dbu(
     output [7:0] seg
     );
     
-    wire run;
-    reg [7:0] m_rf_addr;
-    wire [233:0] status;
-    wire [31:0] m_data, rf_data;
+    wire run;                   // 控制CPU的运行
+    reg [7:0] m_rf_addr;        // MEM/RF的调试读口地址(字地址)
+    wire [233:0] status;        // CPU内部状态(使用文件开头定义的宏来分离对应信号)
+    wire [31:0] m_data, rf_data;// 从RF/MEM读取的数据字
     
-    cpu_one_cycle_db(
+    cpu_one_cycle_db CPU(
         .clk(clk), .rst(rst),
         .run(run), .status(status),
         .m_rf_addr(m_rf_addr),
         .m_data(m_data), .rf_data(rf_data)
     );
     
+    // 与按钮相连的信号需要取边沿
     wire step_edge, inc_edge, dec_edge;
     signal_edge STEPEDGE(clk, step, step_edge);
     signal_edge INCEDGE(clk, inc, inc_edge);
@@ -71,7 +72,7 @@ module dbu(
     
     assign led = sel ? status[`CTRL] : m_rf_addr;
     
-    reg [31:0] seg_num;
+    reg [31:0] seg_num;         // 8个数码管上显示的数字
     always @(*) begin
         case (sel)
             3'd0: seg_num = m_rf ? m_data : rf_data;
@@ -98,8 +99,10 @@ module signal_edge(
     input button,
     output button_redge
     );
-    wire button_clean;
-    `ifdef DEBUG
+    // 取边沿电路，每次button的上升沿来临时button_redge产生一个时钟周期的脉冲信号
+    
+    wire button_clean;      // button去抖动后的信号(仿真阶段并未使用)
+    `ifdef SIMULATION
     assign button_clean = button;
     `else
     jitter_clr jitter_clr_stepbtn(
@@ -123,6 +126,7 @@ module jitter_clr(
     input button,
     output button_clean
     );
+    //去抖动电路
     reg [20:0] cnt;
     always @(posedge clk)
     begin
@@ -145,6 +149,14 @@ module pulse_1khz_gen(
     assign pulse = (cnt == 17'h1);
 endmodule
 
+module seg_encode(
+    input [3:0] num,
+    output [7:0] seg
+    );
+    wire [127:0] segs = 128'hc0_f9_a4_b0_99_92_82_f8_80_90_88_83_c6_a1_86_8e;
+    assign seg = segs >> (num << 3);
+endmodule
+
 module seg_display(
     input clk,
     input [7:0] seg_en,
@@ -152,57 +164,36 @@ module seg_display(
     output [7:0] ca,
     output [7:0] an
     );
-//    wire pulse_1khz;
-//    reg [3:0] num0;
-//    reg [2:0] sel;
+    wire pulse_1khz;
+    reg [3:0] num0;
+    reg [2:0] sel;
     
-//    pulse_1khz_gen pulse_1khz_gen_inst(
-//        .clk(clk),
-//        .pulse(pulse_1khz)
-//    );
+    pulse_1khz_gen pulse_1khz_gen_inst(
+        .clk(clk),
+        .pulse(pulse_1khz)
+    );
     
-//    always @(posedge clk)
-//        if (pulse_1khz) sel <= sel + 3'b1;
-//        else sel <= sel;
+    always @(posedge clk)
+        if (pulse_1khz) sel <= sel + 3'b1;
+        else sel <= sel;
     
-//    seg_encode seg_encode_inst1(
-//        .a(num0),
-//        .spo(ca)
-//    );
-////    mux_8to1 mux_8to1_inst1(
-////        .x0(num[3:0]),
-////        .x1(num[7:4]),
-////        .x2(num[11:8]),
-////        .x3(num[15:12]),
-////        .x4(num[19:16]),
-////        .x5(num[23:20]),
-////        .x6(num[27:24]),
-////        .x7(num[31:28]),
-////        .sel(sel),
-////        .o(num0)
-////    );
-//    always @(*) begin
-//        case (sel)
-//            3'd0: num0 = num[3:0];
-//            3'd1: num0 = num[7:4];
-//            3'd2: num0 = num[11:8];
-//            3'd3: num0 = num[15:12];
-//            3'd4: num0 = num[19:16];
-//            3'd5: num0 = num[23:20];
-//            3'd6: num0 = num[27:24];
-//            3'd7: num0 = num[31:28];
-//        endcase
-//    end
-//    mux_8to1 mux_8to1_inst2(
-//        .x0(8'b11111110 | ~seg_en),
-//        .x1(8'b11111101 | ~seg_en),
-//        .x2(8'b11111011 | ~seg_en),
-//        .x3(8'b11110111 | ~seg_en),
-//        .x4(8'b11101111 | ~seg_en),
-//        .x5(8'b11011111 | ~seg_en),
-//        .x6(8'b10111111 | ~seg_en),
-//        .x7(8'b01111111 | ~seg_en),
-//        .sel(sel),
-//        .o(an)
-//    );
+    seg_encode seg_encode_inst1(
+        .num(num0),
+        .seg(ca)
+    );
+
+    always @(*) begin
+        case (sel)
+            3'd0: num0 = num[3:0];
+            3'd1: num0 = num[7:4];
+            3'd2: num0 = num[11:8];
+            3'd3: num0 = num[15:12];
+            3'd4: num0 = num[19:16];
+            3'd5: num0 = num[23:20];
+            3'd6: num0 = num[27:24];
+            3'd7: num0 = num[31:28];
+        endcase
+    end
+    
+    assign an = (8'b11111110 << sel) | ~seg_en;
 endmodule
