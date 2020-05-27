@@ -150,7 +150,7 @@ module cpu_multicycle(
     mux2 ADDR_MUX(.y(address), .x0(pc), .x1(aluout), .s(IorD));
     dist_mem_gen_512x32 MEM(
         .a(address[31:2]),
-        .d(aluout),
+        .d(b),
         .spo(memdata),
         .clk(clk),
         .we(MemWrite)
