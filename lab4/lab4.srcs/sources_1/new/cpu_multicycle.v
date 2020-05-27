@@ -19,25 +19,127 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-// `include "function_units.v"
+
+`define RTYPE 6'b000000
+`define ADDI  6'b001000
+`define LW    6'b100011
+`define SW    6'b101011
+`define BEQ   6'b000100
+`define J     6'b000010
+
+`define FUNCT_ADD 6'b100000
+
+`define IF       0
+`define DE       1
+`define LWSW_EX  2
+`define LW_MEM   3
+`define LW_WB    4
+`define SW_MEM   5
+`define RT_EX    6
+`define RT_WB    7
+`define BEQ_EX   8
+`define J_EX     9
+`define ADDI_EX  10
+`define ADDI_WB  11
+
+`define ALU_ADD 3'b000
+`define ALU_SUB 3'b001
+`define ALU_AND 3'b010
+`define ALU_OR  3'b011
+`define ALU_XOR 3'b100
+
+//`define IVERILOG
+
+`ifdef IVERILOG
+`include "function_units.v"
+module dist_mem_gen_512x32(
+    input [29:0] a,
+    input [31:0] d,
+    input clk, we,
+    output [31:0] spo
+);
+endmodule
+`endif
+
 module cpu_multicycle(
     input clk,
     input rst
     );
+    wire [31:0] ir;
 
     /* ---------- CONTROL ---------- */
 
+    // State Register
+    reg [3:0] curr_state, next_state;
+    always @(posedge clk, posedge rst) begin
+        if (rst) curr_state <= `IF;
+        else curr_state <= next_state;
+    end
+
+    // Next State Logic
+    always @(*) begin
+        case (curr_state)
+            `IF     : next_state = `DE;
+            `DE     : 
+                begin
+                    case (ir[31:26])
+                        `RTYPE : next_state = `RT_EX;
+                        `ADDI  : next_state = `ADDI_EX;
+                        `LW    : next_state = `LWSW_EX;
+                        `SW    : next_state = `LWSW_EX;
+                        `BEQ   : next_state = `BEQ_EX;
+                        `J     : next_state = `J_EX;
+                        default: next_state = `IF;
+                    endcase
+                end
+            `LWSW_EX: next_state = (ir[31:26] == `LW) ? `LW_MEM : `SW_MEM;
+            `LW_MEM : next_state = `LW_WB;
+            `LW_WB  : next_state = `IF;
+            `SW_MEM : next_state = `IF;
+            `RT_EX  : next_state = `RT_WB;
+            `RT_WB  : next_state = `IF;
+            `BEQ_EX : next_state = `IF;
+            `J_EX   : next_state = `IF;
+            `ADDI_EX: next_state = `ADDI_WB;
+            `ADDI_WB: next_state = `IF;
+            default : next_state = `IF;
+        endcase
+    end
+
+    // Output Logic
     reg PCwe, IorD, MemWrite, MemtoReg, IRWrite, RegDst,
-        RegWrite, ALUSrcA, ALUSrcB, PCSource;
+        RegWrite, ALUSrcA;
+    reg [1:0] ALUSrcB, PCSource;
     reg [2:0] ALUm;
     wire Zero;
-    
-    
+
+    always @(*) begin
+        {PCwe, IorD, MemWrite, MemtoReg, IRWrite, RegDst,
+        RegWrite, ALUSrcA, ALUSrcB, PCSource, ALUm} = 15'b0;
+        case (curr_state)
+            `IF     : {PCwe, IRWrite, ALUSrcB, ALUm} = {4'b1101, `ALU_ADD};
+            `DE     : {ALUSrcB, ALUm} = {2'b11, `ALU_ADD};
+            `LWSW_EX: {ALUSrcA, ALUSrcB, ALUm} = {3'b110, `ALU_ADD};
+            `LW_MEM : {IorD} = 1'b1;
+            `LW_WB  : {MemtoReg, RegWrite} = 2'b11;
+            `SW_MEM : {IorD, MemWrite} = 2'b11;
+            `RT_EX  : 
+                begin
+                    ALUSrcA = 1'b1;
+                    if (ir[5:0] == `FUNCT_ADD) ALUm = `ALU_ADD;
+                end
+            `RT_WB  : {RegDst, RegWrite} = 2'b11;
+            `BEQ_EX : {PCwe, ALUSrcA, PCSource, ALUm} = {Zero, 3'b101, `ALU_XOR};
+            `J_EX   : {PCwe, PCSource} = 3'b110;
+            `ADDI_EX: {ALUSrcA, ALUSrcB, ALUm} = {3'b110, `ALU_ADD};
+            `ADDI_WB: {RegWrite} = 1'b1;
+        endcase
+    end
 
     /* ---------- DATA PATH ---------- */
     
     wire [31:0] pc, nextpc, a, b, aluout, address, memdata,
-                ir, mdr, rd1, rd2, wd, addrext,
+                mdr, rd1, rd2, wd, addrext,
                 alua, alub, aluresult, jumpaddr;
     wire [4:0] wa;
     
@@ -54,7 +156,7 @@ module cpu_multicycle(
         .we(MemWrite)
     );
     register IR(.q(ir), .d(memdata), .clk(clk), .rst(rst), .en(IRWrite));
-    register MDR(.q(mdr), .d(memdata), .clk(clk), .rst(rst), .en(1));
+    register MDR(.q(mdr), .d(memdata), .clk(clk), .rst(rst), .en(1'b1));
     
     mux2 #(5) WA_MUX(.y(wa), .x0(ir[20:16]), .x1(ir[15:11]), .s(RegDst));
     mux2 WD_MUX(.y(wd), .x0(aluout), .x1(mdr), .s(MemtoReg));
@@ -63,13 +165,13 @@ module cpu_multicycle(
         .ra1(ir[25:21]), .ra2(ir[20:16]), .wa(wa),
         .clk(clk), .we(RegWrite)
     );
-    register A(.q(a), .d(rd1), .clk(clk), .rst(rst), .en(1));
-    register B(.q(b), .d(rd2), .clk(clk), .rst(rst), .en(1));
+    register A(.q(a), .d(rd1), .clk(clk), .rst(rst), .en(1'b1));
+    register B(.q(b), .d(rd2), .clk(clk), .rst(rst), .en(1'b1));
     
     signext SEXT(.dout(addrext), .din(ir[15:0]));
     mux2 ALUA_MUX(.y(alua), .x0(pc), .x1(a), .s(ALUSrcA));
     mux4 ALUB_MUX(.y(alub), .x0(b), .x1(32'd4), .x2(addrext), .x3({addrext[29:0],2'b00}), .s(ALUSrcB));
     alu ALU(.y(aluresult), .zf(Zero), .a(alua), .b(alub), .m(ALUm));
-    register ALUOUT(.q(aluout), .d(aluresult), .clk(clk), .rst(rst), .en(1));
+    register ALUOUT(.q(aluout), .d(aluresult), .clk(clk), .rst(rst), .en(1'b1));
 
 endmodule
