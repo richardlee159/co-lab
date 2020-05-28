@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 2020/05/25 18:46:25
+// Create Date: 2020/05/27 19:00:48
 // Design Name: 
-// Module Name: cpu_multicycle
+// Module Name: cpu_multicycle_db
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -28,10 +28,6 @@
 `define J     6'b000010
 
 `define FUNCT_ADD 6'b100000
-`define FUNCT_SUB 6'b100010
-`define FUNCT_AND 6'b100100
-`define FUNCT_OR  6'b100101
-`define FUNCT_XOR 6'b100110
 
 `define IF       0
 `define DE       1
@@ -52,9 +48,20 @@
 `define ALU_OR  3'b011
 `define ALU_XOR 3'b100
 
-module cpu_multicycle(
+`define PC     31:0
+`define IR     63:32
+`define MD     95:64
+`define A      127:96
+`define B      159:128
+`define ALUOUT 191:160
+`define CTRL   207:192
+
+module cpu_multicycle_db(
     input clk,
-    input rst
+    input rst,
+    input [7:0] m_rf_addr,
+    output [31:0] m_data, rf_data,
+    output [207:0] status
     );
     wire [31:0] ir;
 
@@ -117,13 +124,7 @@ module cpu_multicycle(
             `RT_EX  : 
                 begin
                     ALUSrcA = 1'b1;
-                    case (ir[5:0])
-                        `FUNCT_ADD: ALUm = `ALU_ADD;
-                        `FUNCT_SUB: ALUm = `ALU_SUB;
-                        `FUNCT_AND: ALUm = `ALU_AND;
-                        `FUNCT_OR : ALUm = `ALU_OR;
-                        `FUNCT_XOR: ALUm = `ALU_XOR;
-                    endcase
+                    if (ir[5:0] == `FUNCT_ADD) ALUm = `ALU_ADD;
                 end
             `RT_WB  : {RegDst, RegWrite} = 2'b11;
             `BEQ_EX : {PCwe, ALUSrcA, PCSource, ALUm} = {Zero, 3'b101, `ALU_XOR};
@@ -132,6 +133,9 @@ module cpu_multicycle(
             `ADDI_WB: {RegWrite} = 1'b1;
         endcase
     end
+    
+    assign status[`CTRL] = {PCSource, PCwe, IorD, MemWrite, IRWrite, RegDst,
+                            MemtoReg, RegWrite, ALUm, ALUSrcA, ALUSrcB, Zero};
 
     /* ---------- DATA PATH ---------- */
     
@@ -146,21 +150,20 @@ module cpu_multicycle(
     
     mux2 ADDR_MUX(.y(address), .x0(pc), .x1(aluout), .s(IorD));
     dist_mem_gen_512x32 MEM(
-        .a(address[31:2]),
-        .d(b),
-        .spo(memdata),
-        .clk(clk),
-        .we(MemWrite)
+        .a(address[31:2]), .d(b), .spo(memdata),
+        .clk(clk), .we(MemWrite),
+        .dpra({1'b0, m_rf_addr}), .dpo(m_data)
     );
     register IR(.q(ir), .d(memdata), .clk(clk), .rst(rst), .en(IRWrite));
     register MDR(.q(mdr), .d(memdata), .clk(clk), .rst(rst), .en(1'b1));
     
     mux2 #(5) WA_MUX(.y(wa), .x0(ir[20:16]), .x1(ir[15:11]), .s(RegDst));
     mux2 WD_MUX(.y(wd), .x0(aluout), .x1(mdr), .s(MemtoReg));
-    register_file REGFILE(
+    register_file_db REGFILE(
         .rd1(rd1), .rd2(rd2), .wd(wd),
         .ra1(ir[25:21]), .ra2(ir[20:16]), .wa(wa),
-        .clk(clk), .we(RegWrite)
+        .clk(clk), .we(RegWrite),
+        .rax(m_rf_addr[4:0]), .rdx(rf_data)
     );
     register A(.q(a), .d(rd1), .clk(clk), .rst(rst), .en(1'b1));
     register B(.q(b), .d(rd2), .clk(clk), .rst(rst), .en(1'b1));
@@ -170,5 +173,11 @@ module cpu_multicycle(
     mux4 ALUB_MUX(.y(alub), .x0(b), .x1(32'd4), .x2(addrext), .x3({addrext[29:0],2'b00}), .s(ALUSrcB));
     alu ALU(.y(aluresult), .zf(Zero), .a(alua), .b(alub), .m(ALUm));
     register ALUOUT(.q(aluout), .d(aluresult), .clk(clk), .rst(rst), .en(1'b1));
-
+    
+    assign status[`PC] = pc;
+    assign status[`IR] = ir;
+    assign status[`MD] = mdr;
+    assign status[`A] = a;
+    assign status[`B] = b;
+    assign status[`ALUOUT] = aluout;
 endmodule
