@@ -1,12 +1,7 @@
 `timescale 1ns / 1ps
 
 
-`define ALU_ADD 3'b000
-`define ALU_SUB 3'b001
-`define ALU_AND 3'b010
-`define ALU_OR  3'b011
-`define ALU_XOR 3'b100
-`define ALU_DEF 3'b111
+`include "macros.v"
 
 module alu
     #(parameter WIDTH = 32)(
@@ -95,20 +90,20 @@ endmodule
 //    assign y = s ? x1 : x0;
 //endmodule
 
-//module mux4
-//    #(parameter WIDTH = 32)(
-//    output reg [WIDTH-1:0] y,
-//    input [WIDTH-1:0] x0, x1, x2, x3,
-//    input [1:0] s
-//    );
-//    always @(*)
-//        case (s)
-//            2'b00: y = x0;
-//            2'b01: y = x1;
-//            2'b10: y = x2;
-//            2'b11: y = x3;
-//        endcase
-//endmodule
+module mux4
+   #(parameter WIDTH = 32)(
+   output reg [WIDTH-1:0] y,
+   input [WIDTH-1:0] x0, x1, x2, x3,
+   input [1:0] s
+   );
+   always @(*)
+       case (s)
+           2'b00: y = x0;
+           2'b01: y = x1;
+           2'b10: y = x2;
+           2'b11: y = x3;
+       endcase
+endmodule
 
 // module signext
 //     #(parameter IN_WIDTH = 16, OUT_WIDTH = 32)(
