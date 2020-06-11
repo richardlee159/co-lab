@@ -1,7 +1,6 @@
 `timescale 1ns / 1ps
 
 
-`include "macros.v"
 `include "function_units.v"
 `include "control_units.v"
 `include "../ip/imem_256x32/imem_256x32_stub.v"
@@ -141,7 +140,7 @@ module cpu_pipeline(
     hazard HAZARD(
         .PCWrite(PCWrite), .IFIDWrite(IFIDWrite), .noBubble(noBubble),
         .IFID_rs(IFID_ir[25:21]), .IFID_rt(IFID_ir[20:16]), .IDEX_rt(IDEX_rt),
-        .IDEX_MemRead(IDEX_MemRead), .Rtype(IFID_ir[31:26] == `RTYPE)
+        .IDEX_MemRead(IDEX_MemRead), .ExUseRt(ALUSrc == 1'b0)
     );
 endmodule
 /*

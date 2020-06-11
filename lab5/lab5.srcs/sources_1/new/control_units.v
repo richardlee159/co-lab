@@ -68,13 +68,13 @@ endmodule
 module hazard(
     output reg PCWrite, IFIDWrite, noBubble,
     input [4:0] IFID_rs, IFID_rt, IDEX_rt,
-    input IDEX_MemRead, Rtype
+    input IDEX_MemRead, ExUseRt
     );
     always @(*) begin
         {PCWrite,IFIDWrite,noBubble} = 3'b111;
         if (IDEX_MemRead && (IDEX_rt != 5'b0) && (
                 (IDEX_rt == IFID_rs) || 
-                ((IDEX_rt == IFID_rt) && Rtype)
+                ((IDEX_rt == IFID_rt) && ExUseRt)
             )
         ) begin
             {PCWrite,IFIDWrite,noBubble} = 3'b000;
