@@ -21,17 +21,17 @@ module cpu_pipeline(
             EXMEM_Branch, EXMEM_MemRead, EXMEM_MemWrite,
                 EXMEM_MemtoReg, EXMEM_RegWrite,
                 MEMWB_MemtoReg, MEMWB_RegWrite;
-    wire PCWrite, IFIDWrite, noBubble;
+    wire PCWrite, IFIDWrite, noBubble, IFIDFlush, IDEXFlush, EXMEMFlush;
 
     register #(9) IDEX_CTRL(
         .q({IDEX_ALUOp,IDEX_ALUSrc,IDEX_RegDst,IDEX_Branch,IDEX_MemRead,IDEX_MemWrite,IDEX_MemtoReg,IDEX_RegWrite}),
         .d(noBubble ? {ALUOp,ALUSrc,RegDst,Branch,MemRead,MemWrite,MemtoReg,RegWrite} : 9'b0),
-        .clk(clk), .rst(rst), .en(1'b1)
+        .clk(clk), .rst(rst || IDEXFlush), .en(1'b1)
     );
     register #(5) EXMEM_CTRL(
         .q({EXMEM_Branch,EXMEM_MemRead,EXMEM_MemWrite,EXMEM_MemtoReg,EXMEM_RegWrite}),
         .d({IDEX_Branch,IDEX_MemRead,IDEX_MemWrite,IDEX_MemtoReg,IDEX_RegWrite}),
-        .clk(clk), .rst(rst), .en(1'b1)
+        .clk(clk), .rst(rst || EXMEMFlush), .en(1'b1)
     );
     register #(2) MEMWB_CTRL(
         .q({MEMWB_MemtoReg,MEMWB_RegWrite}),
@@ -62,8 +62,8 @@ module cpu_pipeline(
     
     // IF Stage
     imem_256x32 IMEM(.a(pc[9:2]), .spo(imemout));
-    register IFID_IR(.q(IFID_ir), .d(imemout), .clk(clk), .rst(rst), .en(IFIDWrite));
-    register IFID_NPC(.q(IFID_npc), .d(pc + 4), .clk(clk), .rst(rst), .en(IFIDWrite));
+    register IFID_IR(.q(IFID_ir), .d(imemout), .clk(clk), .rst(rst || IFIDFlush), .en(IFIDWrite));
+    register IFID_NPC(.q(IFID_npc), .d(pc + 4), .clk(clk), .rst(rst || IFIDFlush), .en(IFIDWrite));
 
     // ID & WB Stage
     register_file REGFILE(
@@ -110,7 +110,7 @@ module cpu_pipeline(
         .clk(clk), .rst(rst), .en(1'b1)
     );
     register EXMEM_NPC(
-        .q(EXMEM_npc), .d(IDEX_npc + IDEX_imm << 2),
+        .q(EXMEM_npc), .d(IDEX_npc + (IDEX_imm << 2)),
         .clk(clk), .rst(rst), .en(1'b1)
     );
 
@@ -139,8 +139,10 @@ module cpu_pipeline(
     // Hazard Detection Unit
     hazard HAZARD(
         .PCWrite(PCWrite), .IFIDWrite(IFIDWrite), .noBubble(noBubble),
+        .IFIDFlush(IFIDFlush), .IDEXFlush(IDEXFlush), .EXMEMFlush(EXMEMFlush),
         .IFID_rs(IFID_ir[25:21]), .IFID_rt(IFID_ir[20:16]), .IDEX_rt(IDEX_rt),
-        .IDEX_MemRead(IDEX_MemRead), .ExUseRt(ALUSrc == 1'b0)
+        .IDEX_MemRead(IDEX_MemRead), .ExUseRs(Jump == 1'b0), .ExUseRt(ALUSrc == 1'b0),
+        .Jump(Jump), .Brtaken(PCSrc)
     );
 endmodule
 /*

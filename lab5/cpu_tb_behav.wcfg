@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="182500001fs"></ZoomEndTime>
-      <Cursor1Time time="40900000fs"></Cursor1Time>
+      <ZoomStartTime time="616080000fs"></ZoomStartTime>
+      <ZoomEndTime time="795685559fs"></ZoomEndTime>
+      <Cursor1Time time="642882000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="190"></NameColumnWidth>
-      <ValueColumnWidth column_width="116"></ValueColumnWidth>
+      <NameColumnWidth column_width="251"></NameColumnWidth>
+      <ValueColumnWidth column_width="131"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="13" />
+   <WVObjectSize size="28" />
    <wvobject fp_name="/cpu_tb/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -32,13 +32,17 @@
       <obj_property name="ElementShortName">pc[31:0]</obj_property>
       <obj_property name="ObjectShortName">pc[31:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/cpu_tb/CPU/nextpc" type="array">
-      <obj_property name="ElementShortName">nextpc[31:0]</obj_property>
-      <obj_property name="ObjectShortName">nextpc[31:0]</obj_property>
-   </wvobject>
    <wvobject fp_name="/cpu_tb/CPU/imemout" type="array">
       <obj_property name="ElementShortName">imemout[31:0]</obj_property>
       <obj_property name="ObjectShortName">imemout[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_tb/CPU/IFID_npc" type="array">
+      <obj_property name="ElementShortName">IFID_npc[31:0]</obj_property>
+      <obj_property name="ObjectShortName">IFID_npc[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_tb/CPU/CONTROL/opcode" type="array">
+      <obj_property name="ElementShortName">opcode[5:0]</obj_property>
+      <obj_property name="ObjectShortName">opcode[5:0]</obj_property>
    </wvobject>
    <wvobject fp_name="/cpu_tb/CPU/rfrd1" type="array">
       <obj_property name="ElementShortName">rfrd1[31:0]</obj_property>
@@ -48,9 +52,53 @@
       <obj_property name="ElementShortName">rfrd2[31:0]</obj_property>
       <obj_property name="ObjectShortName">rfrd2[31:0]</obj_property>
    </wvobject>
+   <wvobject fp_name="/cpu_tb/CPU/Jump" type="logic">
+      <obj_property name="ElementShortName">Jump</obj_property>
+      <obj_property name="ObjectShortName">Jump</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_tb/CPU/IDEX_npc" type="array">
+      <obj_property name="ElementShortName">IDEX_npc[31:0]</obj_property>
+      <obj_property name="ObjectShortName">IDEX_npc[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_tb/CPU/IDEX_imm" type="array">
+      <obj_property name="ElementShortName">IDEX_imm[31:0]</obj_property>
+      <obj_property name="ObjectShortName">IDEX_imm[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_tb/CPU/alum" type="array">
+      <obj_property name="ElementShortName">alum[2:0]</obj_property>
+      <obj_property name="ObjectShortName">alum[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_tb/CPU/reala" type="array">
+      <obj_property name="ElementShortName">reala[31:0]</obj_property>
+      <obj_property name="ObjectShortName">reala[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_tb/CPU/realb" type="array">
+      <obj_property name="ElementShortName">realb[31:0]</obj_property>
+      <obj_property name="ObjectShortName">realb[31:0]</obj_property>
+   </wvobject>
    <wvobject fp_name="/cpu_tb/CPU/aluout" type="array">
       <obj_property name="ElementShortName">aluout[31:0]</obj_property>
       <obj_property name="ObjectShortName">aluout[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_tb/CPU/zero" type="logic">
+      <obj_property name="ElementShortName">zero</obj_property>
+      <obj_property name="ObjectShortName">zero</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_tb/CPU/EXMEM_npc" type="array">
+      <obj_property name="ElementShortName">EXMEM_npc[31:0]</obj_property>
+      <obj_property name="ObjectShortName">EXMEM_npc[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_tb/CPU/PCSrc" type="logic">
+      <obj_property name="ElementShortName">PCSrc</obj_property>
+      <obj_property name="ObjectShortName">PCSrc</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_tb/CPU/EXMEM_aluout" type="array">
+      <obj_property name="ElementShortName">EXMEM_aluout[31:0]</obj_property>
+      <obj_property name="ObjectShortName">EXMEM_aluout[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_tb/CPU/EXMEM_b" type="array">
+      <obj_property name="ElementShortName">EXMEM_b[31:0]</obj_property>
+      <obj_property name="ObjectShortName">EXMEM_b[31:0]</obj_property>
    </wvobject>
    <wvobject fp_name="/cpu_tb/CPU/dmemout" type="array">
       <obj_property name="ElementShortName">dmemout[31:0]</obj_property>
@@ -60,16 +108,28 @@
       <obj_property name="ElementShortName">rfwd[31:0]</obj_property>
       <obj_property name="ObjectShortName">rfwd[31:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/cpu_tb/CPU/alum" type="array">
-      <obj_property name="ElementShortName">alum[2:0]</obj_property>
-      <obj_property name="ObjectShortName">alum[2:0]</obj_property>
+   <wvobject fp_name="/cpu_tb/CPU/PCWrite" type="logic">
+      <obj_property name="ElementShortName">PCWrite</obj_property>
+      <obj_property name="ObjectShortName">PCWrite</obj_property>
    </wvobject>
-   <wvobject fp_name="/cpu_tb/CPU/zero" type="logic">
-      <obj_property name="ElementShortName">zero</obj_property>
-      <obj_property name="ObjectShortName">zero</obj_property>
+   <wvobject fp_name="/cpu_tb/CPU/IFIDWrite" type="logic">
+      <obj_property name="ElementShortName">IFIDWrite</obj_property>
+      <obj_property name="ObjectShortName">IFIDWrite</obj_property>
    </wvobject>
-   <wvobject fp_name="/cpu_tb/CPU/PCSrc" type="logic">
-      <obj_property name="ElementShortName">PCSrc</obj_property>
-      <obj_property name="ObjectShortName">PCSrc</obj_property>
+   <wvobject fp_name="/cpu_tb/CPU/noBubble" type="logic">
+      <obj_property name="ElementShortName">noBubble</obj_property>
+      <obj_property name="ObjectShortName">noBubble</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_tb/CPU/IFIDFlush" type="logic">
+      <obj_property name="ElementShortName">IFIDFlush</obj_property>
+      <obj_property name="ObjectShortName">IFIDFlush</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_tb/CPU/IDEXFlush" type="logic">
+      <obj_property name="ElementShortName">IDEXFlush</obj_property>
+      <obj_property name="ObjectShortName">IDEXFlush</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_tb/CPU/EXMEMFlush" type="logic">
+      <obj_property name="ElementShortName">EXMEMFlush</obj_property>
+      <obj_property name="ObjectShortName">EXMEMFlush</obj_property>
    </wvobject>
 </wave_config>

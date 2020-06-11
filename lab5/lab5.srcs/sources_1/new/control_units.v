@@ -16,7 +16,7 @@ module control(
             `LW   : {ALUSrc,MemRead,MemtoReg,RegWrite} = 4'b1111;
             `SW   : {ALUSrc,MemWrite} = 2'b11;
             `BEQ  : {ALUOp[0],Branch} = 2'b11;
-            `J    : {Jump} = 1'b1;
+            `J    : {ALUOp,Jump} = 3'b111;
         endcase
     end
 endmodule
@@ -66,18 +66,23 @@ module forward(
 endmodule
 
 module hazard(
-    output reg PCWrite, IFIDWrite, noBubble,
+    output reg PCWrite, IFIDWrite, noBubble, IFIDFlush, IDEXFlush, EXMEMFlush,
     input [4:0] IFID_rs, IFID_rt, IDEX_rt,
-    input IDEX_MemRead, ExUseRt
+    input IDEX_MemRead, ExUseRs, ExUseRt, Jump, Brtaken
     );
     always @(*) begin
         {PCWrite,IFIDWrite,noBubble} = 3'b111;
         if (IDEX_MemRead && (IDEX_rt != 5'b0) && (
-                (IDEX_rt == IFID_rs) || 
+                ((IDEX_rt == IFID_rs) && ExUseRs) || 
                 ((IDEX_rt == IFID_rt) && ExUseRt)
             )
         ) begin
             {PCWrite,IFIDWrite,noBubble} = 3'b000;
         end
+    end
+    always @(*) begin
+        {IFIDFlush,IDEXFlush,EXMEMFlush} = 3'b000;
+        if (Jump) IFIDFlush = 1'b1;
+        if (Brtaken) {IFIDFlush,IDEXFlush,EXMEMFlush} = 3'b111;
     end
 endmodule
