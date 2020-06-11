@@ -1,10 +1,10 @@
 `timescale 1ns / 1ps
 
 
-`include "function_units.v"
-`include "control_units.v"
-`include "../ip/imem_256x32/imem_256x32_stub.v"
-`include "../ip/dmem_256x32/dmem_256x32_stub.v"
+// `include "function_units.v"
+// `include "control_units.v"
+// `include "../ip/imem_256x32/imem_256x32_stub.v"
+// `include "../ip/dmem_256x32/dmem_256x32_stub.v"
 
 module cpu_pipeline(
     input clk,
@@ -96,7 +96,7 @@ module cpu_pipeline(
 
     // EX Stage
     mux4 FAMUX(.y(reala), .x0(IDEX_a), .x1(rfwd), .x2(EXMEM_aluout), .x3(), .s(ForwardA));
-    mux4 FBMUX(.y(realb), .x0(IDEX_b), .x1(rfwd), .x2(EXMEM_aluout), .x3(), .s(ForwardA));
+    mux4 FBMUX(.y(realb), .x0(IDEX_b), .x1(rfwd), .x2(EXMEM_aluout), .x3(), .s(ForwardB));
 
     alu ALU(
         .y(aluout), .zf(zero), .m(alum),

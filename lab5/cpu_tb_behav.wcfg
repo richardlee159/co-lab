@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="616080000fs"></ZoomStartTime>
-      <ZoomEndTime time="795685559fs"></ZoomEndTime>
-      <Cursor1Time time="642882000fs"></Cursor1Time>
+      <ZoomStartTime time="130498879fs"></ZoomStartTime>
+      <ZoomEndTime time="309900225fs"></ZoomEndTime>
+      <Cursor1Time time="260787000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="251"></NameColumnWidth>
-      <ValueColumnWidth column_width="131"></ValueColumnWidth>
+      <ValueColumnWidth column_width="123"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="28" />
+   <WVObjectSize size="30" />
    <wvobject fp_name="/cpu_tb/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -36,10 +36,6 @@
       <obj_property name="ElementShortName">imemout[31:0]</obj_property>
       <obj_property name="ObjectShortName">imemout[31:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/cpu_tb/CPU/IFID_npc" type="array">
-      <obj_property name="ElementShortName">IFID_npc[31:0]</obj_property>
-      <obj_property name="ObjectShortName">IFID_npc[31:0]</obj_property>
-   </wvobject>
    <wvobject fp_name="/cpu_tb/CPU/CONTROL/opcode" type="array">
       <obj_property name="ElementShortName">opcode[5:0]</obj_property>
       <obj_property name="ObjectShortName">opcode[5:0]</obj_property>
@@ -55,10 +51,6 @@
    <wvobject fp_name="/cpu_tb/CPU/Jump" type="logic">
       <obj_property name="ElementShortName">Jump</obj_property>
       <obj_property name="ObjectShortName">Jump</obj_property>
-   </wvobject>
-   <wvobject fp_name="/cpu_tb/CPU/IDEX_npc" type="array">
-      <obj_property name="ElementShortName">IDEX_npc[31:0]</obj_property>
-      <obj_property name="ObjectShortName">IDEX_npc[31:0]</obj_property>
    </wvobject>
    <wvobject fp_name="/cpu_tb/CPU/IDEX_imm" type="array">
       <obj_property name="ElementShortName">IDEX_imm[31:0]</obj_property>
@@ -104,6 +96,10 @@
       <obj_property name="ElementShortName">dmemout[31:0]</obj_property>
       <obj_property name="ObjectShortName">dmemout[31:0]</obj_property>
    </wvobject>
+   <wvobject fp_name="/cpu_tb/CPU/MEMWB_wa" type="array">
+      <obj_property name="ElementShortName">MEMWB_wa[4:0]</obj_property>
+      <obj_property name="ObjectShortName">MEMWB_wa[4:0]</obj_property>
+   </wvobject>
    <wvobject fp_name="/cpu_tb/CPU/rfwd" type="array">
       <obj_property name="ElementShortName">rfwd[31:0]</obj_property>
       <obj_property name="ObjectShortName">rfwd[31:0]</obj_property>
@@ -131,5 +127,17 @@
    <wvobject fp_name="/cpu_tb/CPU/EXMEMFlush" type="logic">
       <obj_property name="ElementShortName">EXMEMFlush</obj_property>
       <obj_property name="ObjectShortName">EXMEMFlush</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_tb/CPU/ForwardA" type="array">
+      <obj_property name="ElementShortName">ForwardA[1:0]</obj_property>
+      <obj_property name="ObjectShortName">ForwardA[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_tb/CPU/ForwardB" type="array">
+      <obj_property name="ElementShortName">ForwardB[1:0]</obj_property>
+      <obj_property name="ObjectShortName">ForwardB[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_tb/CPU/ForwardB_MEM" type="logic">
+      <obj_property name="ElementShortName">ForwardB_MEM</obj_property>
+      <obj_property name="ObjectShortName">ForwardB_MEM</obj_property>
    </wvobject>
 </wave_config>
