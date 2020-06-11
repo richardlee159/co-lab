@@ -1,6 +1,7 @@
 `timescale 1ns / 1ps
 
 
+`include "macros.v"
 `include "function_units.v"
 `include "control_units.v"
 `include "../ip/imem_256x32/imem_256x32_stub.v"
@@ -21,10 +22,11 @@ module cpu_pipeline(
             EXMEM_Branch, EXMEM_MemRead, EXMEM_MemWrite,
                 EXMEM_MemtoReg, EXMEM_RegWrite,
                 MEMWB_MemtoReg, MEMWB_RegWrite;
+    wire PCWrite, IFIDWrite, noBubble;
 
     register #(9) IDEX_CTRL(
         .q({IDEX_ALUOp,IDEX_ALUSrc,IDEX_RegDst,IDEX_Branch,IDEX_MemRead,IDEX_MemWrite,IDEX_MemtoReg,IDEX_RegWrite}),
-        .d({ALUOp,ALUSrc,RegDst,Branch,MemRead,MemWrite,MemtoReg,RegWrite}),
+        .d(noBubble ? {ALUOp,ALUSrc,RegDst,Branch,MemRead,MemWrite,MemtoReg,RegWrite} : 9'b0),
         .clk(clk), .rst(rst), .en(1'b1)
     );
     register #(5) EXMEM_CTRL(
@@ -52,17 +54,17 @@ module cpu_pipeline(
     wire [31:0] pc, nextpc, imemout, rfrd1, rfrd2, rfwd,
                 reala, realb, aluout, dmemout;
     wire [2:0] alum;
-    reg  [1:0] ForwardA, ForwardB;
-    reg  ForwardB_MEM;
+    wire [1:0] ForwardA, ForwardB;
+    wire ForwardB_MEM;
     wire zero, PCSrc;
     
     assign nextpc = PCSrc ? EXMEM_npc : (Jump ? {IFID_npc[31:28],IFID_ir[25:0],2'b00} : pc + 4);
-    register PC(.q(pc), .d(nextpc), .clk(clk), .rst(rst), .en(1'b1));
+    register PC(.q(pc), .d(nextpc), .clk(clk), .rst(rst), .en(PCWrite));
     
     // IF Stage
     imem_256x32 IMEM(.a(pc[9:2]), .spo(imemout));
-    register IFID_IR(.q(IFID_ir), .d(imemout), .clk(clk), .rst(rst), .en(1'b1));
-    register IFID_NPC(.q(IFID_npc), .d(pc + 4), .clk(clk), .rst(rst), .en(1'b1));
+    register IFID_IR(.q(IFID_ir), .d(imemout), .clk(clk), .rst(rst), .en(IFIDWrite));
+    register IFID_NPC(.q(IFID_npc), .d(pc + 4), .clk(clk), .rst(rst), .en(IFIDWrite));
 
     // ID & WB Stage
     register_file REGFILE(
@@ -128,23 +130,19 @@ module cpu_pipeline(
     // WB Stage
     assign rfwd = MEMWB_MemtoReg ? MEMWB_memout : MEMWB_aluout;
 
-    /* ---------- Forwarding Unit ---------- */
+    // Forwarding Unit
+    forward FORWARD(
+        ForwardA, ForwardB, ForwardB_MEM,
+        IDEX_rs, IDEX_rt, EXMEM_wa, MEMWB_wa,
+        EXMEM_RegWrite, MEMWB_RegWrite
+    );
 
-    always @(*) begin
-        ForwardA = 2'b00;
-        ForwardB = 2'b00;
-        ForwardB_MEM = 1'b0;
-        if (MEMWB_RegWrite && (MEMWB_wa != 5'b0)) begin
-            if (MEMWB_wa == IDEX_rs) ForwardA = 2'b01;
-            if (MEMWB_wa == IDEX_rt) ForwardB = 2'b01;
-            if (MEMWB_wa == EXMEM_wa) ForwardB_MEM = 1'b1;
-        end
-        if (EXMEM_RegWrite && (EXMEM_wa != 5'b0)) begin
-            if (EXMEM_wa == IDEX_rs) ForwardA = 2'b10;
-            if (EXMEM_wa == IDEX_rt) ForwardB = 2'b10;
-        end
-    end
-
+    // Hazard Detection Unit
+    hazard HAZARD(
+        .PCWrite(PCWrite), .IFIDWrite(IFIDWrite), .noBubble(noBubble),
+        .IFID_rs(IFID_ir[25:21]), .IFID_rt(IFID_ir[20:16]), .IDEX_rt(IDEX_rt),
+        .IDEX_MemRead(IDEX_MemRead), .Rtype(IFID_ir[31:26] == `RTYPE)
+    );
 endmodule
 /*
 register NAME(.q(), .d(), .clk(clk), .rst(rst), .en(1'b1));

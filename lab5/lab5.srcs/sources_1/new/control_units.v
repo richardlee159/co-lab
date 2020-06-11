@@ -42,3 +42,42 @@ module alucontrol(
         2'b11: ALUm = `ALU_DEF;
     endcase
 endmodule
+
+module forward(
+    output reg [1:0] ForwardA, ForwardB,
+    output reg ForwardB_MEM,
+    input [4:0] IDEX_rs, IDEX_rt, EXMEM_wa, MEMWB_wa,
+    input EXMEM_RegWrite, MEMWB_RegWrite
+    );
+    always @(*) begin
+        ForwardA = 2'b00;
+        ForwardB = 2'b00;
+        ForwardB_MEM = 1'b0;
+        if (MEMWB_RegWrite && (MEMWB_wa != 5'b0)) begin
+            if (MEMWB_wa == IDEX_rs) ForwardA = 2'b01;
+            if (MEMWB_wa == IDEX_rt) ForwardB = 2'b01;
+            if (MEMWB_wa == EXMEM_wa) ForwardB_MEM = 1'b1;
+        end
+        if (EXMEM_RegWrite && (EXMEM_wa != 5'b0)) begin
+            if (EXMEM_wa == IDEX_rs) ForwardA = 2'b10;
+            if (EXMEM_wa == IDEX_rt) ForwardB = 2'b10;
+        end
+    end
+endmodule
+
+module hazard(
+    output reg PCWrite, IFIDWrite, noBubble,
+    input [4:0] IFID_rs, IFID_rt, IDEX_rt,
+    input IDEX_MemRead, Rtype
+    );
+    always @(*) begin
+        {PCWrite,IFIDWrite,noBubble} = 3'b111;
+        if (IDEX_MemRead && (IDEX_rt != 5'b0) && (
+                (IDEX_rt == IFID_rs) || 
+                ((IDEX_rt == IFID_rt) && Rtype)
+            )
+        ) begin
+            {PCWrite,IFIDWrite,noBubble} = 3'b000;
+        end
+    end
+endmodule
