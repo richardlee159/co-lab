@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="130498879fs"></ZoomStartTime>
-      <ZoomEndTime time="309900225fs"></ZoomEndTime>
-      <Cursor1Time time="260787000fs"></Cursor1Time>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="432673835fs"></ZoomEndTime>
+      <Cursor1Time time="165256000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="251"></NameColumnWidth>
-      <ValueColumnWidth column_width="123"></ValueColumnWidth>
+      <NameColumnWidth column_width="250"></NameColumnWidth>
+      <ValueColumnWidth column_width="116"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="30" />
+   <WVObjectSize size="28" />
    <wvobject fp_name="/cpu_tb/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -31,10 +31,6 @@
    <wvobject fp_name="/cpu_tb/CPU/pc" type="array">
       <obj_property name="ElementShortName">pc[31:0]</obj_property>
       <obj_property name="ObjectShortName">pc[31:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/cpu_tb/CPU/imemout" type="array">
-      <obj_property name="ElementShortName">imemout[31:0]</obj_property>
-      <obj_property name="ObjectShortName">imemout[31:0]</obj_property>
    </wvobject>
    <wvobject fp_name="/cpu_tb/CPU/CONTROL/opcode" type="array">
       <obj_property name="ElementShortName">opcode[5:0]</obj_property>
@@ -71,14 +67,6 @@
    <wvobject fp_name="/cpu_tb/CPU/aluout" type="array">
       <obj_property name="ElementShortName">aluout[31:0]</obj_property>
       <obj_property name="ObjectShortName">aluout[31:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/cpu_tb/CPU/zero" type="logic">
-      <obj_property name="ElementShortName">zero</obj_property>
-      <obj_property name="ObjectShortName">zero</obj_property>
-   </wvobject>
-   <wvobject fp_name="/cpu_tb/CPU/EXMEM_npc" type="array">
-      <obj_property name="ElementShortName">EXMEM_npc[31:0]</obj_property>
-      <obj_property name="ObjectShortName">EXMEM_npc[31:0]</obj_property>
    </wvobject>
    <wvobject fp_name="/cpu_tb/CPU/PCSrc" type="logic">
       <obj_property name="ElementShortName">PCSrc</obj_property>
@@ -139,5 +127,9 @@
    <wvobject fp_name="/cpu_tb/CPU/ForwardB_MEM" type="logic">
       <obj_property name="ElementShortName">ForwardB_MEM</obj_property>
       <obj_property name="ObjectShortName">ForwardB_MEM</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_tb/CPU/REGFILE/regs[9]" type="array">
+      <obj_property name="ElementShortName">[9][31:0]</obj_property>
+      <obj_property name="ObjectShortName">[9][31:0]</obj_property>
    </wvobject>
 </wave_config>
