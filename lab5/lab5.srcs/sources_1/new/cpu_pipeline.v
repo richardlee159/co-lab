@@ -1,10 +1,12 @@
 `timescale 1ns / 1ps
 
 
+`ifdef USE_IVERILOG
 `include "function_units.v"
 `include "control_units.v"
 `include "../ip/imem_256x32/imem_256x32_stub.v"
 `include "../ip/dmem_256x32/dmem_256x32_stub.v"
+`endif
 
 module cpu_pipeline(
     input clk,

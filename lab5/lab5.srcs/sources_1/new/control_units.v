@@ -16,7 +16,7 @@ module control(
             `LW   : {ALUSrc,MemRead,MemtoReg,RegWrite} = 4'b1111;
             `SW   : {ALUSrc,MemWrite} = 2'b11;
             `BEQ  : {ALUOp[0],Branch} = 2'b11;
-            `J    : {ALUOp,Jump} = 3'b111;
+            `J    : {ALUOp,ALUSrc,Jump} = 4'b1111;
         endcase
     end
 endmodule
