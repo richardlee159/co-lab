@@ -51,24 +51,6 @@ module register_file            // 32 * WIDTH RegisterFile
     end
 endmodule
 
-// module register_file_db            // 32 * WIDTH RF for DBU
-//     #(parameter WIDTH = 32)(
-//     output [WIDTH-1:0] rd1, rd2, rdx,
-//     input [WIDTH-1:0] wd,
-//     input [4:0] ra1, ra2, wa, rax,
-//     input clk, we
-//     );
-//     reg [WIDTH-1:0] regs [1:31];
-//     // asynchronous read
-//     assign rd1 = ra1 ? regs[ra1] : 0;
-//     assign rd2 = ra2 ? regs[ra2] : 0;
-//     assign rdx = rax ? regs[rax] : 0;
-//     // synchronous write
-//     always @(posedge clk) begin
-//         if (we && wa) regs[wa] <= wd;
-//     end
-// endmodule
-
 module register
     #(parameter WIDTH = 32,
     RST_VALUE = 0)(
@@ -80,15 +62,6 @@ module register
         if (rst) q <= RST_VALUE;
         else if (en) q <= d;
 endmodule
-
-//module mux2
-//    #(parameter WIDTH = 32)(
-//    output [WIDTH-1:0] y,
-//    input [WIDTH-1:0] x0, x1,
-//    input s
-//    );
-//    assign y = s ? x1 : x0;
-//endmodule
 
 module mux4
    #(parameter WIDTH = 32)(
@@ -104,11 +77,3 @@ module mux4
            2'b11: y = x3;
        endcase
 endmodule
-
-// module signext
-//     #(parameter IN_WIDTH = 16, OUT_WIDTH = 32)(
-//     output [OUT_WIDTH-1:0] dout,
-//     input [IN_WIDTH-1:0] din
-//     );
-//     assign dout = {{(OUT_WIDTH-IN_WIDTH){din[IN_WIDTH-1]}},din};
-// endmodule

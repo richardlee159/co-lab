@@ -1,10 +1,10 @@
 `timescale 1ns / 1ps
 
 
-// `include "function_units.v"
-// `include "control_units.v"
-// `include "../ip/imem_256x32/imem_256x32_stub.v"
-// `include "../ip/dmem_256x32/dmem_256x32_stub.v"
+`include "function_units.v"
+`include "control_units.v"
+`include "../ip/imem_256x32/imem_256x32_stub.v"
+`include "../ip/dmem_256x32/dmem_256x32_stub.v"
 
 module cpu_pipeline(
     input clk,
@@ -82,10 +82,6 @@ module cpu_pipeline(
         .clk(clk), .rst(rst), .en(1'b1)
     );
     register IDEX_NPC(.q(IDEX_npc), .d(IFID_npc), .clk(clk), .rst(rst), .en(1'b1));
-//    register IDEX_JADDR(
-//        .q(IDEX_jaddr), .d({IFID_npc[31:28],IFID_ir[25:0],2'b00}),
-//        .clk(clk), .rst(rst), .en(1'b1)
-//    );
 
     control CONTROL(
         .opcode(IFID_ir[31:26]),
@@ -145,7 +141,3 @@ module cpu_pipeline(
         .Jump(Jump), .Brtaken(PCSrc)
     );
 endmodule
-/*
-register NAME(.q(), .d(), .clk(clk), .rst(rst), .en(1'b1));
-mux4 MUX(.y(), .x0(), .x1(), .x2(), .x3(), .s());
-*/
