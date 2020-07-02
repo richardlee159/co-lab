@@ -4,6 +4,7 @@
 *.ppt
 *.pdf
 *.rar
+*.jar
 
 *.cache
 *.hw
