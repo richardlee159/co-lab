@@ -13,7 +13,7 @@ module bus(
     wire bus_rd, bus_wr;
     
     // CPU
-    cpu_top(
+    cpu_top CPU(
         .clk(clk), .rst(rst),
         .bus_addr(bus_addr),
         .bus_din (bus_din ),
@@ -35,9 +35,16 @@ module bus(
     );
     
     // IO Interface
-    register SSR(.q(ssr_out), .d(bus_din), .clk(clk), .rst(rst), .en(ssr_en & bus_wr));
-    register SDR(.q(sdr_out), .d(bus_din), .clk(clk), .rst(rst), .en(sdr_en & bus_wr));
+    
+    // Switch
+    wire btn_edge;
+    signal_edge EDGE(.clk(clk), .button(btn), .button_redge(btn_edge));
+    register SSR(.q(ssr_out), .d(32'b1), .clk(clk), .rst((sdr_en & bus_rd) | rst), .en(btn_edge));
+    register SDR(.q(sdr_out), .d({24'b0,sw}), .clk(clk), .rst(rst), .en(btn_edge));
+    
+    // LED
     register LDR(.q(ldr_out), .d(bus_din), .clk(clk), .rst(rst), .en(ldr_en & bus_wr));
+    assign led = ldr_out[7:0];
     
     // Bus Router  
     assign bus_dout = ({32{mem_en}} & mem_out)

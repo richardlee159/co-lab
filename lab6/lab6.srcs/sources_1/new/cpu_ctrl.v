@@ -37,6 +37,7 @@ module alucontrol(
             `FUNCT_AND: ALUm = `ALU_AND;
             `FUNCT_OR : ALUm = `ALU_OR;
             `FUNCT_XOR: ALUm = `ALU_XOR;
+            `FUNCT_SLT: ALUm = `ALU_SLT;
             default: ALUm = `ALU_DEF;
         endcase
         2'b11: ALUm = `ALU_DEF;

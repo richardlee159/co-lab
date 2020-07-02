@@ -12,6 +12,8 @@ module alu
     );
     localparam MSB = WIDTH - 1;
     
+    wire [MSB:0] amb;
+    assign amb = a - b;
     always @(*) begin
         case (m)
             `ALU_ADD : {y} = a + b;
@@ -19,7 +21,7 @@ module alu
             `ALU_AND : y = a & b;
             `ALU_OR  : y = a | b;
             `ALU_XOR : y = a ^ b;
-            `ALU_SLT : y = (a < b) ? 1 : 0;
+            `ALU_SLT : y = {{MSB{1'b0}},amb[MSB]};
             default : y = 0;
         endcase
         case (m)
@@ -77,4 +79,18 @@ module mux4
            2'b10: y = x2;
            2'b11: y = x3;
        endcase
+endmodule
+
+module signal_edge(
+    input clk,
+    input button,
+    output button_redge
+    );
+    reg button_r1, button_r2;
+    always @(posedge clk)
+    begin
+        button_r1 <= button;
+        button_r2 <= button_r1;
+    end
+    assign button_redge = button_r1 & (~button_r2);
 endmodule

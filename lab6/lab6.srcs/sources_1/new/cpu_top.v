@@ -6,7 +6,7 @@
 `include "control_units.v"
 `endif
 
-module cpu_pipeline(
+module cpu_top(
     input clk,
     input rst,
     output [31:0] bus_addr,
