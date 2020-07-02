@@ -1,10 +1,10 @@
 -- Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2019.1 (win64) Build 2552052 Fri May 24 14:49:42 MDT 2019
--- Date        : Thu Jun 11 19:58:24 2020
+-- Date        : Wed Jun 10 20:08:43 2020
 -- Host        : DESKTOP-0B6OP8F running 64-bit major release  (build 9200)
--- Command     : write_vhdl -force -mode funcsim
---               C:/Users/richard/Desktop/co_lab/lab5/lab5.srcs/sources_1/ip/dmem_256x32/dmem_256x32_sim_netlist.vhdl
+-- Command     : write_vhdl -force -mode funcsim -rename_top dmem_256x32 -prefix
+--               dmem_256x32_ dmem_256x32_sim_netlist.vhdl
 -- Design      : dmem_256x32
 -- Purpose     : This VHDL netlist is a functional simulation representation of the design and should not be modified or
 --               synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -22,8 +22,6 @@ entity dmem_256x32_spram is
     we : in STD_LOGIC;
     a : in STD_LOGIC_VECTOR ( 7 downto 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of dmem_256x32_spram : entity is "spram";
 end dmem_256x32_spram;
 
 architecture STRUCTURE of dmem_256x32_spram is
@@ -453,7 +451,7 @@ begin
     );
 ram_reg_0_255_0_0: unisim.vcomponents.RAM256X1S
     generic map(
-      INIT => X"000000000000000000000000000000000000000000000000000000000000008A"
+      INIT => X"0000000000000000000000000000000000000000000000000000000000000080"
     )
         port map (
       A(7 downto 0) => a(7 downto 0),
@@ -574,7 +572,7 @@ ram_reg_0_255_19_19: unisim.vcomponents.RAM256X1S
     );
 ram_reg_0_255_1_1: unisim.vcomponents.RAM256X1S
     generic map(
-      INIT => X"000000000000000000000000000000000000000000000000000000000000000C"
+      INIT => X"0000000000000000000000000000000000000000000000000000000000000002"
     )
         port map (
       A(7 downto 0) => a(7 downto 0),
@@ -695,7 +693,7 @@ ram_reg_0_255_29_29: unisim.vcomponents.RAM256X1S
     );
 ram_reg_0_255_2_2: unisim.vcomponents.RAM256X1S
     generic map(
-      INIT => X"0000000000000000000000000000000000000000000000000000000000000080"
+      INIT => X"0000000000000000000000000000000000000000000000000000000000000082"
     )
         port map (
       A(7 downto 0) => a(7 downto 0),
@@ -739,7 +737,7 @@ ram_reg_0_255_3_3: unisim.vcomponents.RAM256X1S
     );
 ram_reg_0_255_4_4: unisim.vcomponents.RAM256X1S
     generic map(
-      INIT => X"0000000000000000000000000000000000000000000000000000000000000000"
+      INIT => X"0000000000000000000000000000000000000000000000000000000000000008"
     )
         port map (
       A(7 downto 0) => a(7 downto 0),
@@ -816,8 +814,6 @@ entity dmem_256x32_dist_mem_gen_v8_0_13_synth is
     we : in STD_LOGIC;
     a : in STD_LOGIC_VECTOR ( 7 downto 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of dmem_256x32_dist_mem_gen_v8_0_13_synth : entity is "dist_mem_gen_v8_0_13_synth";
 end dmem_256x32_dist_mem_gen_v8_0_13_synth;
 
 architecture STRUCTURE of dmem_256x32_dist_mem_gen_v8_0_13_synth is
@@ -919,8 +915,6 @@ entity dmem_256x32_dist_mem_gen_v8_0_13 is
   attribute C_SYNC_ENABLE of dmem_256x32_dist_mem_gen_v8_0_13 : entity is 1;
   attribute C_WIDTH : integer;
   attribute C_WIDTH of dmem_256x32_dist_mem_gen_v8_0_13 : entity is 32;
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of dmem_256x32_dist_mem_gen_v8_0_13 : entity is "dist_mem_gen_v8_0_13";
 end dmem_256x32_dist_mem_gen_v8_0_13;
 
 architecture STRUCTURE of dmem_256x32_dist_mem_gen_v8_0_13 is

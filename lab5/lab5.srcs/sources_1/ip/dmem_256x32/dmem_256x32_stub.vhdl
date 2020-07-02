@@ -1,10 +1,10 @@
 -- Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2019.1 (win64) Build 2552052 Fri May 24 14:49:42 MDT 2019
--- Date        : Thu Jun 11 19:58:24 2020
+-- Date        : Wed Jun 10 20:08:43 2020
 -- Host        : DESKTOP-0B6OP8F running 64-bit major release  (build 9200)
--- Command     : write_vhdl -force -mode synth_stub
---               C:/Users/richard/Desktop/co_lab/lab5/lab5.srcs/sources_1/ip/dmem_256x32/dmem_256x32_stub.vhdl
+-- Command     : write_vhdl -force -mode synth_stub -rename_top dmem_256x32 -prefix
+--               dmem_256x32_ dmem_256x32_stub.vhdl
 -- Design      : dmem_256x32
 -- Purpose     : Stub declaration of top-level module interface
 -- Device      : xc7a100tcsg324-1

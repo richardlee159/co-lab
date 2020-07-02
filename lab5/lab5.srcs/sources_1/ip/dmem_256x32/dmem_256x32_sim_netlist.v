@@ -1,10 +1,10 @@
 // Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2019.1 (win64) Build 2552052 Fri May 24 14:49:42 MDT 2019
-// Date        : Thu Jun 11 19:58:24 2020
+// Date        : Wed Jun 10 20:08:43 2020
 // Host        : DESKTOP-0B6OP8F running 64-bit major release  (build 9200)
-// Command     : write_verilog -force -mode funcsim
-//               C:/Users/richard/Desktop/co_lab/lab5/lab5.srcs/sources_1/ip/dmem_256x32/dmem_256x32_sim_netlist.v
+// Command     : write_verilog -force -mode funcsim -rename_top dmem_256x32 -prefix
+//               dmem_256x32_ dmem_256x32_sim_netlist.v
 // Design      : dmem_256x32
 // Purpose     : This verilog netlist is a functional simulation representation of the design and should not be modified
 //               or synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -97,7 +97,7 @@ endmodule
 (* C_MEM_INIT_FILE = "dmem_256x32.mif" *) (* C_MEM_TYPE = "1" *) (* C_PARSER_TYPE = "1" *) 
 (* C_PIPELINE_STAGES = "0" *) (* C_QCE_JOINED = "0" *) (* C_QUALIFY_WE = "0" *) 
 (* C_READ_MIF = "1" *) (* C_REG_A_D_INPUTS = "0" *) (* C_REG_DPRA_INPUT = "0" *) 
-(* C_SYNC_ENABLE = "1" *) (* C_WIDTH = "32" *) (* ORIG_REF_NAME = "dist_mem_gen_v8_0_13" *) 
+(* C_SYNC_ENABLE = "1" *) (* C_WIDTH = "32" *) 
 module dmem_256x32_dist_mem_gen_v8_0_13
    (a,
     d,
@@ -247,7 +247,6 @@ module dmem_256x32_dist_mem_gen_v8_0_13
         .we(we));
 endmodule
 
-(* ORIG_REF_NAME = "dist_mem_gen_v8_0_13_synth" *) 
 module dmem_256x32_dist_mem_gen_v8_0_13_synth
    (spo,
     clk,
@@ -274,7 +273,6 @@ module dmem_256x32_dist_mem_gen_v8_0_13_synth
         .we(we));
 endmodule
 
-(* ORIG_REF_NAME = "spram" *) 
 module dmem_256x32_spram
    (spo,
     clk,
@@ -615,7 +613,7 @@ module dmem_256x32_spram
         .Q(qspo_int[9]),
         .R(1'b0));
   RAM256X1S #(
-    .INIT(256'h000000000000000000000000000000000000000000000000000000000000008A)) 
+    .INIT(256'h0000000000000000000000000000000000000000000000000000000000000080)) 
     ram_reg_0_255_0_0
        (.A(a),
         .D(d[0]),
@@ -703,7 +701,7 @@ module dmem_256x32_spram
         .WCLK(clk),
         .WE(we));
   RAM256X1S #(
-    .INIT(256'h000000000000000000000000000000000000000000000000000000000000000C)) 
+    .INIT(256'h0000000000000000000000000000000000000000000000000000000000000002)) 
     ram_reg_0_255_1_1
        (.A(a),
         .D(d[1]),
@@ -791,7 +789,7 @@ module dmem_256x32_spram
         .WCLK(clk),
         .WE(we));
   RAM256X1S #(
-    .INIT(256'h0000000000000000000000000000000000000000000000000000000000000080)) 
+    .INIT(256'h0000000000000000000000000000000000000000000000000000000000000082)) 
     ram_reg_0_255_2_2
        (.A(a),
         .D(d[2]),
@@ -823,7 +821,7 @@ module dmem_256x32_spram
         .WCLK(clk),
         .WE(we));
   RAM256X1S #(
-    .INIT(256'h0000000000000000000000000000000000000000000000000000000000000000)) 
+    .INIT(256'h0000000000000000000000000000000000000000000000000000000000000008)) 
     ram_reg_0_255_4_4
        (.A(a),
         .D(d[4]),
